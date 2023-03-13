@@ -15,15 +15,20 @@ exports.addArticle = async (req, res) => {
         author_id: req.auth.id,
     }
     const sql = `insert into ev_articles set ?`
-    let result = await query(sql, articleInfo).catch((error) => { res.cc(error) })
-    if (result.affectedRows !== 1) return res.cc('发布新文章失败！')
-    res.cc('发布文章成功！', 0)
+    try {
+        let result = await query(sql, articleInfo)
+        if (result.affectedRows !== 1) return res.cc('发布新文章失败！')
+        res.cc('发布文章成功！', 0)
+    } catch (error) {
+        res.cc(error)
+    }
+
 }
 
 // 获取文章列表处理函数
 exports.getArticleList = async (req, res) => {
+    const sqlStr = 'select * from ev_articles where cate_id=? and state=?'
     try {
-        const sqlStr = 'select * from ev_articles where cate_id=? and state=?'
         let results = await query(sqlStr, [req.body.cate_id, req.body.state])
         if (!results.length) return res.cc('获取文章列表失败')
         let total = results.length
@@ -36,6 +41,46 @@ exports.getArticleList = async (req, res) => {
             data: result,
             total
         })
+    } catch (error) {
+        res.cc(error)
+    }
+}
+
+// 根据id删除文章
+exports.deleteArticle = async (req, res) => {
+    const sql = 'update ev_articles set is_delete=1 where id=?'
+    try {
+        let result = await query(sql, req.params.id)
+        if (result.affectedRows !== 1) return res.cc('删除失败')
+        res.cc('删除成功', 0)
+    } catch (error) {
+        res.cc(error)
+    }
+}
+
+// 根据id获取文章详情
+exports.getArticleById = async (req, res) => {
+    const sql = 'select * from ev_articles where id=?'
+    try {
+        let result = await query(sql, req.params.id)
+        if (!result.length) return res.cc('获取文章详情失败')
+        res.send({
+            status: 0,
+            message: "获取文章成功！",
+            data: result
+        })
+    } catch (error) {
+        res.cc(error)
+    }
+}
+
+// 根据id更新文章详情
+exports.updateArticleById = async (req, res) => {
+    const sqlStr = 'update ev_articles set ? where id=?'
+    try {
+        let result = await query(sqlStr, [req.body, req.body.id])
+        if (result.affectedRows !== 1) return res.cc('修改文章失败')
+        res.cc('更新文章成功', 0)
     } catch (error) {
         res.cc(error)
     }

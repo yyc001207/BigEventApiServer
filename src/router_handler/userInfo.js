@@ -1,4 +1,4 @@
-const  query  = require('@/db/index')
+const query = require('@/db/index')
 const bcrypt = require('bcryptjs')
 // 获取用户信息
 exports.getUserInfo = async (req, res) => {
@@ -48,7 +48,13 @@ exports.updatePassword = async (req, res) => {
 // 修改头像
 exports.updateAvatar = async (req, res) => {
     const sql = 'update ev_users set user_pic=? where id=?'
-    let result = await query(sql, [req.body.avatar, req.auth.id]).catch((error) => { res.cc(error) })
-    if (result.affectedRows !== 1) return res.cc('修改用户头像失败！')
-    res.cc('修改头像成功', 0)
+    try {
+        let result = await query(sql, [req.body.avatar, req.auth.id])
+        if (result.affectedRows !== 1) return res.cc('修改用户头像失败！')
+        res.cc('修改头像成功', 0)
+    } catch (error) {
+        rec.cc(error)
+    }
+
+
 }

@@ -1,15 +1,19 @@
-const  query  = require('@/db/index')
+const query = require('@/db/index')
 
 // 获取分类列表
 exports.getArtCateList = async (req, res) => {
     const sql = 'select * from ev_article_cate where is_delete=0 order by id asc'
-    let result = await query(sql)
-    if (result.length == 0) return res.cc('获取文章分类列表失败！').catch((error) => { res.cc(error) })
-    res.send({
-        status: 0,
-        message: '获取文章分类列表成功！',
-        data: result
-    })
+    try {
+        let result = await query(sql)
+        if (result.length == 0) return res.cc('获取文章分类列表失败！')
+        res.send({
+            status: 0,
+            message: '获取文章分类列表成功！',
+            data: result
+        })
+    } catch (error) {
+        res.cc(error)
+    }
 }
 
 // 新增分类
@@ -29,21 +33,28 @@ exports.addCates = async (req, res) => {
 
 exports.deleteCateById = async (req, res) => {
     const sql = `update ev_article_cate set is_delete=1 where id=?`
-    let result = await query(sql, req.params.id)
-    if (result.affectedRows !== 1) return res.cc('删除文章分类失败')
-    res.cc('删除文章分类成功！', 0)
+    try {
+        let result = await query(sql, req.params.id)
+        if (result.affectedRows !== 1) return res.cc('删除文章分类失败')
+        res.cc('删除文章分类成功！', 0)
+    } catch (error) {
+        res.cc(error)
+    }
 }
 
 exports.getArtCateById = async (req, res) => {
     const sql = 'select * from ev_article_cate where id=?'
-    let result = await query(sql, req.params.id).catch((error) => { res.cc(error) })
-    console.log(result);
-    if (!result.length) return res.cc('查询失败')
-    res.send({
-        status: 0,
-        message: '查询成功！',
-        data: result[0]
-    })
+    try {
+        let result = await query(sql, req.params.id)
+        if (!result.length) return res.cc('查询失败')
+        res.send({
+            status: 0,
+            message: '查询成功！',
+            data: result[0]
+        })
+    } catch (error) {
+        res.cc(error)
+    }
 }
 
 exports.updateCateById = async (req, res) => {

@@ -1,4 +1,4 @@
-const  query  = require('@/db/index')
+const query = require('@/db/index')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const config = require('../../config')
@@ -26,21 +26,28 @@ exports.regUser = async (req, res) => {
 exports.login = async (req, res) => {
     const userInfo = req.body
     const sqlStr = 'select * from ev_users where username=?'
-    let result = await query(sqlStr, userInfo.username).catch((error) => { res.cc(error) })
-    // 用户是否存在
-    if (result.length !== 1) return res.cc('未注册用户')
-    // 判断密码是否正确
-    const compareResult = bcrypt.compareSync(userInfo.password, result[0].password)
-    if (!compareResult) {
-        return res.cc('密码错误')
+    let result = await query(sqlStr, userInfo.username)
+    try {
+        // 用户是否存在
+        if (result.length !== 1) return res.cc('未注册用户')
+        // 判断密码是否正确
+        const compareResult = bcrypt.compareSync(userInfo.password, result[0].password)
+        if (!compareResult) {
+            return res.cc('密码错误')
+        }
+        // 去除password与用户头像
+        const user = { ...result[0], password: '', user_pic: '' }
+        // 生成token
+        const tokenStr = jwt.sign(user, config.jwtSecretKey, { expiresIn: config.expiresIn })
+        res.send({
+            status: 0,
+            message: '登陆成功',
+            token: 'Bearer ' + tokenStr
+        })
+    } catch (error) {
+        res.cc(error)
     }
-    // 去除password与用户头像
-    const user = { ...result[0], password: '', user_pic: '' }
-    // 生成token
-    const tokenStr = jwt.sign(user, config.jwtSecretKey, { expiresIn: config.expiresIn })
-    res.send({
-        status: 0,
-        message: '登陆成功',
-        token: 'Bearer ' + tokenStr
-    })
+
+
+
 }

@@ -16,6 +16,7 @@ exports.add_article_schema = {
     },
 }
 
+const id = joi.number().integer().min(1).required()
 const pagenum = joi.number().min(1).required()
 const pagesize = joi.number().min(1).required()
 exports.get_article_schema = {
@@ -24,5 +25,22 @@ exports.get_article_schema = {
         state,
         pagenum,
         pagesize
+    }
+}
+
+exports.update_article_schema = {
+    body: {
+        id,
+        title,
+        cate_id,
+        content,
+        state,
+    }
+}
+
+
+exports.id_article_schema = {
+    params: {
+        id
     }
 }
