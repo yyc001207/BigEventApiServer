@@ -14,8 +14,11 @@ exports.addArticle = async (req, res) => {
         // 文章作者的Id
         author_id: req.auth.id,
     }
+    const sqlStr = 'select * from ev_article_cate where id=?'
     const sql = `insert into ev_articles set ?`
     try {
+        let results = await query(sqlStr, req.body.cate_id)
+        if (!results.length) return res.cc('没有该文章分类')
         let result = await query(sql, articleInfo)
         if (result.affectedRows !== 1) return res.cc('发布新文章失败！')
         res.cc('发布文章成功！', 0)
