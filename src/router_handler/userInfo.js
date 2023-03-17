@@ -4,13 +4,17 @@ const bcrypt = require('bcryptjs')
 exports.getUserInfo = async (req, res) => {
     // 创建查询用户信息sql语句
     const sqlStr = 'select id,username,nickname,email,user_pic from ev_users where id=?'
-    let result = await query(sqlStr, req.auth.id).catch((error) => { res.cc(error) })
-    if (result.length !== 1) return res.cc('获取用户失败！')
-    res.send({
-        status: 0,
-        message: '获取用户信息成功',
-        data: result[0]
-    })
+    try {
+        let result = await query(sqlStr, req.auth.id).catch((error) => { res.cc(error) })
+        if (result.length !== 1) return res.cc('获取用户失败！')
+        res.send({
+            status: 0,
+            message: '获取用户信息成功',
+            data: result[0]
+        })
+    } catch (error) {
+        res.cc(error)
+    }
 }
 
 // 更新用户信息
@@ -20,9 +24,15 @@ exports.updateUserInfo = async (req, res) => {
     }
     // 创建更新用户信息的sql语句
     const sqlStr = 'update ev_users set ? where id=?'
-    let result = await query(sqlStr, [req.body, req.body.id]).catch((error) => { res.cc(error) })
-    if (result.affectedRows !== 1) return res.cc('修改用户信息失败！')
-    return res.cc('修改用户信息成功', 0)
+    try {
+        let result = await query(sqlStr, [req.body, req.body.id])
+        console.log(result);
+        if (result.affectedRows !== 1) return res.cc('修改用户信息失败！')
+        return res.cc('修改用户信息成功', 0)
+    } catch (error) {
+        res.cc(error)
+    }
+
 }
 
 // 修改密码
