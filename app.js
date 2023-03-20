@@ -13,6 +13,7 @@ app.use(express.urlencoded({ extended: false }))
 app.use('/uploads', express.static('./uploads'))
 // 封装res.cc函数
 app.use((req, res, next) => {
+    console.log(req);
     console.log(req.method + " " + req.url + ' ' + new Date())
     res.cc = (err, status = 1) => {
         res.send({

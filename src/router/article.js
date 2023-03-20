@@ -16,7 +16,7 @@ const { add_article_schema, get_article_schema, id_article_schema, update_articl
 
 router.post('/add', upload.single('cover_img'), expressJoi(add_article_schema), routerHandler.addArticle)
 
-router.get('/list', expressJoi(get_article_schema), routerHandler.getArticleList)
+router.post('/list', expressJoi(get_article_schema), routerHandler.getArticleList)
 
 router.delete('/delete/:id', expressJoi(id_article_schema), routerHandler.deleteArticle)
 

@@ -1,6 +1,5 @@
 const query = require('@/db/index')
 const path = require('path')
-const { getArtCateById } = require('./artcate')
 
 // 发布新文章的处理函数
 exports.addArticle = async (req, res) => {
@@ -64,6 +63,7 @@ const getArticleListBysql = async (req, res, sql, total) => {
 
 // 获取文章列表处理函数
 exports.getArticleList = async (req, res) => {
+
     /* 
         当前端返回cate_id = 0时，表示查找所有分类文章
     */
