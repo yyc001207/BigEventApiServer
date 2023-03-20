@@ -1,6 +1,7 @@
 const query = require('@/db/index')
 const path = require('path')
-
+const moment = require('moment')
+moment.locale('zh-cn')
 // 发布新文章的处理函数
 exports.addArticle = async (req, res) => {
     if (!req.file || req.file.fieldname !== 'cover_img') return res.cc('文章封面是必选参数！')
@@ -50,7 +51,7 @@ const getArticleListBysql = async (req, res, sql, total) => {
             }
         }) : cateName = cate_name_list[0].name
         data.push({
-            id: item.id, title: item.title, state: item.state, pub_date: item.pub_date, cate_name: cateName
+            id: item.id, title: item.title, state: item.state, pub_date: moment(item.pub_date).format('lll'), cate_name: cateName
         })
     });
     res.send({
